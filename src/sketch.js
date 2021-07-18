@@ -294,7 +294,6 @@ function draw() {
   const hoveredShapes = shapes.filter((s) => s.isHovered());
   const hovered = hoveredShapes[hoveredShapes.length - 1];
   const hoveredGroup = hovered ? [hovered] : [];
-  const others = shapes.filter((s) => !hoveredGroup.includes(s));
 
   shapes.forEach((s) => {
     s.draw();
