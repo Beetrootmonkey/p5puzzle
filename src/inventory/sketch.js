@@ -196,12 +196,32 @@ class Inventory {
   }
 }
 
-function mouseClicked() {
+// function mouseClicked() {
+//   const slot = inventory.getHoveredSlot();
+//   if (mouseItemStack && slot?.itemStack) {
+//     const tmp = mouseItemStack;
+//     mouseItemStack = slot.itemStack;
+//     slot.itemStack = tmp;
+//   } else if (mouseItemStack) {
+//     slot.itemStack = mouseItemStack;
+//     mouseItemStack = null;
+//   } else if (slot?.itemStack) {
+//     mouseItemStack = slot.itemStack;
+//     slot.itemStack = null;
+//   }
+// }
+
+function leftMouseButtonClicked() {
   const slot = inventory.getHoveredSlot();
   if (mouseItemStack && slot?.itemStack) {
-    const tmp = mouseItemStack;
-    mouseItemStack = slot.itemStack;
-    slot.itemStack = tmp;
+    if (mouseItemStack.item !== slot.itemStack.item) {
+      const tmp = mouseItemStack;
+      mouseItemStack = slot.itemStack;
+      slot.itemStack = tmp;
+    } else {
+      slot.itemStack.size += mouseItemStack.size;
+      mouseItemStack = null;
+    }
   } else if (mouseItemStack) {
     slot.itemStack = mouseItemStack;
     mouseItemStack = null;
@@ -211,76 +231,56 @@ function mouseClicked() {
   }
 }
 
-// function leftMouseButtonClicked() {
-//   const slot = inventory.getHoveredSlot();
-//   if (mouseItemStack && slot?.itemStack) {
-//     if (mouseItemStack.item !== slot.itemStack.item) {
-//       const tmp = mouseItemStack;
-//       mouseItemStack = slot.itemStack;
-//       slot.itemStack = tmp;
-//     } else {
-//       slot.itemStack.size += mouseItemStack.size;
-//       mouseItemStack = null;
-//     }
-//   } else if (mouseItemStack) {
-//     slot.itemStack = mouseItemStack;
-//     mouseItemStack = null;
-//   } else if (slot?.itemStack) {
-//     mouseItemStack = slot.itemStack;
-//     slot.itemStack = null;
-//   }
-// }
-//
-// function rightMouseButtonClicked() {
-//   const slot = inventory.getHoveredSlot();
-//   if (mouseItemStack && slot?.itemStack) {
-//     if (mouseItemStack.item !== slot.itemStack.item) {
-//       // Do nothing
-//     } else {
-//       slot.itemStack.size++;
-//       mouseItemStack.size--;
-//       if (mouseItemStack.size <= 0) {
-//         mouseItemStack = null;
-//       }
-//     }
-//   } else if (mouseItemStack) {
-//     slot.itemStack = mouseItemStack.copy();
-//     slot.itemStack.size = 1;
-//     mouseItemStack.size--;
-//     if (mouseItemStack.size <= 0) {
-//       mouseItemStack = null;
-//     }
-//   } else if (slot?.itemStack) {
-//     mouseItemStack = slot.itemStack.copy();
-//     slot.itemStack.size = Math.floor(slot.itemStack.size / 2);
-//     mouseItemStack.size -= slot.itemStack.size;
-//     if (slot.itemStack.size <= 0) {
-//       slot.itemStack = null;
-//     }
-//   }
-// }
+function rightMouseButtonClicked() {
+  const slot = inventory.getHoveredSlot();
+  if (mouseItemStack && slot?.itemStack) {
+    if (mouseItemStack.item !== slot.itemStack.item) {
+      // Do nothing
+    } else {
+      slot.itemStack.size++;
+      mouseItemStack.size--;
+      if (mouseItemStack.size <= 0) {
+        mouseItemStack = null;
+      }
+    }
+  } else if (mouseItemStack) {
+    slot.itemStack = mouseItemStack.copy();
+    slot.itemStack.size = 1;
+    mouseItemStack.size--;
+    if (mouseItemStack.size <= 0) {
+      mouseItemStack = null;
+    }
+  } else if (slot?.itemStack) {
+    mouseItemStack = slot.itemStack.copy();
+    slot.itemStack.size = Math.floor(slot.itemStack.size / 2);
+    mouseItemStack.size -= slot.itemStack.size;
+    if (slot.itemStack.size <= 0) {
+      slot.itemStack = null;
+    }
+  }
+}
 
-// function mousePressed(event) {
-//   if (event.button === 0) {
-//     if (prevLeftMouseButtonState === mouseStates.RELEASED) {
-//       leftMouseButtonClicked();
-//     }
-//     prevLeftMouseButtonState = mouseStates.PRESSED;
-//   } else if (event.button === 2) {
-//     if (prevRightMouseButtonState === mouseStates.RELEASED) {
-//       rightMouseButtonClicked();
-//     }
-//     prevRightMouseButtonState = mouseStates.PRESSED;
-//   }
-// }
+function mousePressed(event) {
+  if (event.button === 0) {
+    if (prevLeftMouseButtonState === mouseStates.RELEASED) {
+      leftMouseButtonClicked();
+    }
+    prevLeftMouseButtonState = mouseStates.PRESSED;
+  } else if (event.button === 2) {
+    if (prevRightMouseButtonState === mouseStates.RELEASED) {
+      rightMouseButtonClicked();
+    }
+    prevRightMouseButtonState = mouseStates.PRESSED;
+  }
+}
 
-// function mouseReleased(event) {
-//   if (event.button === 0) {
-//     prevLeftMouseButtonState = mouseStates.RELEASED;
-//   } else if (event.button === 2) {
-//     prevRightMouseButtonState = mouseStates.RELEASED;
-//   }
-// }
+function mouseReleased(event) {
+  if (event.button === 0) {
+    prevLeftMouseButtonState = mouseStates.RELEASED;
+  } else if (event.button === 2) {
+    prevRightMouseButtonState = mouseStates.RELEASED;
+  }
+}
 
 function getAsset(type, name) {
   const assetMap = assets.get(type);
@@ -335,7 +335,6 @@ function preload() {
   addAsset(ITEMS, 'iron_shovel.png', 4);
   addAsset(ITEMS, 'iron_sword.png', 4);
   addAsset(ITEMS, 'stick.png', 4);
-  addAsset(ITEMS, 'candle.png', 4);
 
   addAsset(GUI, 'crafting_table.png');
   addAsset(GUI, 'item_slot.png', 4);
@@ -349,7 +348,6 @@ function setup() {
   const { ITEMS } = assetTypes;
   items.STICK = new Item(getAsset(ITEMS, 'stick'));
   items.IRON_INGOT = new Item(getAsset(ITEMS, 'iron_ingot'));
-  items.CANDLE = new Item(getAsset(ITEMS, 'candle'));
 
   inventory = new Inventory(0, 0, 10, 10);
 
