@@ -26,6 +26,9 @@ assets.set(assetTypes.ITEMS, new Map());
 
 const items = {};
 
+let shader;
+let shaderGraphics;
+
 let inventory;
 
 // Returns a scaled-up copy
@@ -60,6 +63,12 @@ class Item {
   draw(x, y, width, height) {
     image(this.img, x, y, width, height);
   }
+
+  drawOutline(x, y, width, height) {	
+	shader.setUniform('u_texture', this.img);
+	shaderGraphics.rect(0, 0, width + 2 * pixelSize, height + 2 * pixelSize);
+    image(shaderGraphics, x - pixelSize, y - pixelSize, width + 2 * pixelSize, height + 2 * pixelSize);
+  }
 }
 
 class ItemStack {
@@ -73,6 +82,10 @@ class ItemStack {
     fill(255);
     textAlign(RIGHT);
     text(this.size, x + cellSize - 6, y + cellSize - 6);
+  }
+
+  drawOutline(x, y, width, height) {
+    this.item.drawOutline(x, y, width, height);
   }
 
   copy() {
@@ -102,9 +115,12 @@ class InventorySlot {
     }
 
     if (hovered) {
-      noStroke();
-      fill(255, 255, 255, 100);
-      rect(slotScreenX + pixelSize, slotScreenY + pixelSize, cellSize, cellSize);
+	  if (this.itemStack) {
+	    this.itemStack.drawOutline(slotScreenX + pixelSize, slotScreenY + pixelSize, cellSize, cellSize);
+	  }
+      //noStroke();
+      //fill(255, 255, 255, 100);
+      //rect(slotScreenX + pixelSize, slotScreenY + pixelSize, cellSize, cellSize);
     }
   }
 }
@@ -322,6 +338,8 @@ function scaleUpAsset(type, name, scale) {
 }
 
 function preload() {
+	shader = loadShader('assets/shader.vert', 'assets/shader.frag');
+	
   const { ITEMS, GUI } = assetTypes;
   addAsset(ITEMS, 'iron_axe.png', 4);
   addAsset(ITEMS, 'iron_boots.png', 4);
@@ -361,14 +379,22 @@ function setup() {
   inventory.setItemStack(2, 1, new ItemStack(items.IRON_INGOT, 10));
   inventory.setItemStack(2, 1, new ItemStack(items.IRON_INGOT, 20));
   inventory.setItemStack(1, 1, new ItemStack(items.IRON_INGOT, 20));
+  
+  // shaders require WEBGL mode to work
+  shaderGraphics = createGraphics(cellSize + 2 * pixelSize, cellSize + 2 * pixelSize, WEBGL);
+  shaderGraphics.noStroke();
 }
 
 function draw() {
   background(220);
+  
+  shaderGraphics.shader(shader);
+
+  shader.setUniform('u_time', frameCount * 0.01);
 
   inventory.draw();
 
   if (mouseItemStack) {
     mouseItemStack.draw(mouseX - cellSize / 2, mouseY - cellSize / 2 - 4, cellSize, cellSize);
-  }
+  }  
 }
