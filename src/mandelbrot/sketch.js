@@ -39,19 +39,19 @@ function setup() {
   size = 900;
   iterations = 256;
   threshold = 4;
-  
+
   //offsetX = 0.3322456703602321;
   offsetX = -0.554166980996254;
   //offsetX = 0.339453419597841;
-  
+
   //offsetY = -0.38901050632211825;
   offsetY = 0.5558668701818453;
   //offsetY = -0.5553343136397788;
-  
+
   //zoomValue = 6.169561282447572;
   zoomValue = 6;
   //zoomValue = 0.000005206479263399148;
-  
+
   window.setX = (x) => {
 	  offsetX = x;
   };
@@ -60,13 +60,13 @@ function setup() {
   };
   window.setY = (y) => {
 	  offsetY = y;
-  }; 
+  };
   window.moveY = (y) => {
 	offsetY += y;
   };
   window.setZoom = (z) => {
 	  zoomValue = z;
-  }; 
+  };
 
   createCanvas(size, size);
   noSmooth();
