@@ -64,7 +64,7 @@ class Item {
     image(this.img, x, y, width, height);
   }
 
-  drawOutline(x, y, width, height) {	
+  drawOutline(x, y, width, height) {
 	shader.setUniform('u_texture', this.img);
 	shaderGraphics.rect(0, 0, width + 2 * pixelSize, height + 2 * pixelSize);
     image(shaderGraphics, x - pixelSize, y - pixelSize, width + 2 * pixelSize, height + 2 * pixelSize);
@@ -339,7 +339,7 @@ function scaleUpAsset(type, name, scale) {
 
 function preload() {
 	shader = loadShader('assets/shader.vert', 'assets/shader.frag');
-	
+
   const { ITEMS, GUI } = assetTypes;
   addAsset(ITEMS, 'iron_axe.png', 4);
   addAsset(ITEMS, 'iron_boots.png', 4);
@@ -379,7 +379,7 @@ function setup() {
   inventory.setItemStack(2, 1, new ItemStack(items.IRON_INGOT, 10));
   inventory.setItemStack(2, 1, new ItemStack(items.IRON_INGOT, 20));
   inventory.setItemStack(1, 1, new ItemStack(items.IRON_INGOT, 20));
-  
+
   // shaders require WEBGL mode to work
   shaderGraphics = createGraphics(cellSize + 2 * pixelSize, cellSize + 2 * pixelSize, WEBGL);
   shaderGraphics.noStroke();
@@ -387,7 +387,7 @@ function setup() {
 
 function draw() {
   background(220);
-  
+
   shaderGraphics.shader(shader);
 
   shader.setUniform('u_time', frameCount * 0.01);
@@ -396,5 +396,5 @@ function draw() {
 
   if (mouseItemStack) {
     mouseItemStack.draw(mouseX - cellSize / 2, mouseY - cellSize / 2 - 4, cellSize, cellSize);
-  }  
+  }
 }
