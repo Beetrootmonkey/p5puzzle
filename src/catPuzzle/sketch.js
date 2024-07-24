@@ -295,9 +295,38 @@ function draw() {
   const hovered = hoveredShapes[hoveredShapes.length - 1];
   const hoveredGroup = hovered ? [hovered] : [];
 
+  let other;
+  if (hovered && hovered.isMoving) {
+    push();
+    noStroke();
+    fill(200, 200, 200);
+
+    let x = hovered.x + mouseX;
+    let y = hovered.y + mouseY;
+    x = Math.round(x / size) * size;
+    y = Math.round(y / size) * size;
+
+    if (x < 0 || x >= width || y < 0 || y >= height) {
+      x = hovered.xBeforeMovement
+      y = hovered.yBeforeMovement;
+    }
+
+    other = shapes.find((e) => e.x === x && e.y === y);
+
+    rectMode(CORNER)
+    rect(x, y, size, size);
+    pop();
+  }
+
   shapes.forEach((s) => {
     s.draw();
   });
+
+  if (hovered && hovered.isMoving && other) {
+    other.drawOverlay(100);
+    other.drawOutline();
+    hovered.draw();
+  }
 
   hoveredGroup.forEach((s) => {
     s.drawOutline();
